@@ -12,20 +12,27 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 import com.api.products.Service.ProductService;
 import com.api.products.model.Product;
 
 @RestController
 @RequestMapping("/products")
-@CrossOrigin(origins = "*" )
+@CrossOrigin(origins = "*")
 public class ProductController {
-    
+
     @Autowired
     private ProductService service;
 
     @GetMapping
     public Iterable<Product> getAllProducts() {
         return service.findAllProducts();
+    }
+
+    @GetMapping("/{id}")
+    public Optional<Product> findById(@PathVariable long id) {
+        return service.findById(id);
     }
 
     @PutMapping

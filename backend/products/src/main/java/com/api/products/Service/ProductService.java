@@ -18,7 +18,7 @@ public class ProductService {
     ProductRepository repository;
 
     @Autowired
-    private ResponseProduct responseProduct; 
+    private ResponseProduct responseProduct;
 
     public Iterable<Product> findAllProducts() {
         return repository.findAll();
@@ -26,38 +26,41 @@ public class ProductService {
 
     public ResponseEntity<?> insertOrUpdate(Product product, String action) {
 
-        if(product.getName().isBlank()) {
-            responseProduct.setMessage("Product name is mandatory!"); 
+        if (product.getName().isBlank()) {
+            responseProduct.setMessage("Product name is mandatory!");
             return new ResponseEntity<ResponseProduct>(responseProduct, HttpStatus.BAD_REQUEST);
         } else if (product.getBrand().isBlank()) {
             responseProduct.setMessage("Brand of product is mandatory!");
             return new ResponseEntity<>(responseProduct, HttpStatus.BAD_REQUEST);
         } else {
-            if(action.equals("insert")) {
+            if (action.equals("insert")) {
                 return new ResponseEntity<>(repository.save(product), HttpStatus.CREATED);
             } else {
                 Optional<Product> productFound = repository.findById(product.getId());
-                if(productFound.isEmpty() || product == null){
+                if (productFound.isEmpty() || product == null) {
                     responseProduct.setMessage("The product don't exist in the database!");
                     return new ResponseEntity<>(responseProduct, HttpStatus.NOT_FOUND);
                 } else {
                     product.setId(product.getId());
                     return new ResponseEntity<>(repository.save(product), HttpStatus.OK);
                 }
-              
+
             }
         }
     }
 
-    public ResponseEntity<?> delete(Long id) { 
+    public ResponseEntity<?> delete(Long id) {
         Optional<Product> productFound = repository.findById(id);
-                if(productFound.isEmpty()) {
-                    responseProduct.setMessage("The product don't exist in the database!");
-                    return new ResponseEntity<>(responseProduct, HttpStatus.NOT_FOUND);
-                }
+        if (productFound.isEmpty()) {
+            responseProduct.setMessage("The product don't exist in the database!");
+            return new ResponseEntity<>(responseProduct, HttpStatus.NOT_FOUND);
+        }
         repository.deleteById(id);
         responseProduct.setMessage("Product was deleted");
         return new ResponseEntity<ResponseProduct>(responseProduct, HttpStatus.OK);
     }
 
+    public Optional<Product> findById(long id) {
+        return repository.findById(id);
+    }
 }
